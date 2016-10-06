@@ -1,6 +1,8 @@
 package org.mfusco.fromgoftolambda.talk.chainofresponsibility;
 
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 public class ChainOfRespLambda {
 
@@ -51,11 +53,20 @@ public class ChainOfRespLambda {
     }
 
     private static void work(File file) {
-        System.out.println(parseText(file).orElse(
-                parsePresentation(file).orElse(
-                        parseAudio(file).orElse(
-                                parseVideo(file).orElse(
-                                        "Unknown file"
-                                )))));
+        Stream<Function<File, Optional<String>>> functionStream = Stream.<Function<File, Optional<String>>>of(
+                ChainOfRespLambda::parseText,
+                ChainOfRespLambda::parsePresentation,
+                ChainOfRespLambda::parseAudio,
+                ChainOfRespLambda::parseVideo
+        );
+
+        String result = functionStream
+                .map(f -> f.apply(file))
+                .filter(Optional::isPresent)
+                .findFirst()
+                .flatMap(Function.identity())
+                .orElse("Unknown file");
+
+        System.out.println(result);
     }
 }
