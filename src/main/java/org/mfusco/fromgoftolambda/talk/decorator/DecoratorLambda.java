@@ -24,8 +24,8 @@ public class DecoratorLambda {
     }
 
     private static double calculate(double salary, DoubleUnaryOperator... operators) {
-        return Stream.of(operators)
-                .reduce(DoubleUnaryOperator.identity(), DoubleUnaryOperator::andThen)
-                .applyAsDouble(salary);
+        DoubleUnaryOperator finalOperator = Stream.of(operators)
+                .reduce(DoubleUnaryOperator.identity(), DoubleUnaryOperator::andThen);
+        return finalOperator.applyAsDouble(salary);
     }
 }
