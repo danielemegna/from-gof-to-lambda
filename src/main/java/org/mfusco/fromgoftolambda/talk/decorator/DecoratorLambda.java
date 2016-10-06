@@ -13,12 +13,21 @@ public class DecoratorLambda {
     }
 
     public static void main(String[] args) {
-        double result = new DefaultSalaryCalculator()
-                .andThen(Taxes::generalTax)
-                .andThen(Taxes::regionalTax)
-                .andThen(Taxes::healthInsurance)
-                .applyAsDouble(30000.00);
-
+        double result = calculate(30000.00,
+                new DefaultSalaryCalculator(),
+                Taxes::generalTax,
+                Taxes::regionalTax,
+                Taxes::healthInsurance
+        );
         System.out.println(result);
+    }
+
+    private static double calculate(double salary, DoubleUnaryOperator... operators) {
+        DoubleUnaryOperator chain = DoubleUnaryOperator.identity();
+
+        for (DoubleUnaryOperator operator : operators)
+            chain = chain.andThen(operator);
+
+        return chain.applyAsDouble(salary);
     }
 }
