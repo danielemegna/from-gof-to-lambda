@@ -12,35 +12,11 @@ public class DecoratorLambda {
         }
     }
 
-    public static class GeneralTaxDecorator implements DoubleUnaryOperator {
-
-        @Override
-        public double applyAsDouble(double salary) {
-            return Taxes.generalTax(salary);
-        }
-    }
-
-    public static class RegionalTaxDecorator implements DoubleUnaryOperator {
-
-        @Override
-        public double applyAsDouble(double salary) {
-            return Taxes.regionalTax(salary);
-        }
-    }
-
-    public static class HealthInsuranceDecorator implements DoubleUnaryOperator {
-
-        @Override
-        public double applyAsDouble(double salary) {
-            return Taxes.healthInsurance(salary);
-        }
-    }
-
     public static void main(String[] args) {
         double result = new DefaultSalaryCalculator()
-                .andThen(new GeneralTaxDecorator())
-                .andThen(new RegionalTaxDecorator())
-                .andThen(new HealthInsuranceDecorator())
+                .andThen(Taxes::generalTax)
+                .andThen(Taxes::regionalTax)
+                .andThen(Taxes::healthInsurance)
                 .applyAsDouble(30000.00);
 
         System.out.println(result);
