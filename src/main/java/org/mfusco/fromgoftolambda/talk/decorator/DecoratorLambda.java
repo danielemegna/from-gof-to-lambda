@@ -1,6 +1,7 @@
 package org.mfusco.fromgoftolambda.talk.decorator;
 
 import java.util.function.DoubleUnaryOperator;
+import java.util.stream.Stream;
 
 public class DecoratorLambda {
 
@@ -23,11 +24,8 @@ public class DecoratorLambda {
     }
 
     private static double calculate(double salary, DoubleUnaryOperator... operators) {
-        DoubleUnaryOperator chain = DoubleUnaryOperator.identity();
-
-        for (DoubleUnaryOperator operator : operators)
-            chain = chain.andThen(operator);
-
-        return chain.applyAsDouble(salary);
+        return Stream.of(operators)
+                .reduce(DoubleUnaryOperator.identity(), DoubleUnaryOperator::andThen)
+                .applyAsDouble(salary);
     }
 }
